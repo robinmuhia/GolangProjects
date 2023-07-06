@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -31,9 +32,12 @@ func main(){
 	if err != nil{
 		log.Fatal("Can't connect to databse",err)
 	}
+	db := database.New(conn)
 	apiConfig := apiConfig{
-		DB: database.New(conn),
+		DB: db,
 	}
+	go startScraping(db,10,time.Minute)
+
 	router := chi.NewRouter()
 
 	router.Use(cors.Handler(cors.Options{		
@@ -55,6 +59,7 @@ func main(){
 	v1Router.Post("/feed_follows",apiConfig.middlewareAuth(apiConfig.handlerCreateFeedFollow))
 	v1Router.Get("/feed_follows",apiConfig.middlewareAuth(apiConfig.handlerGetFeedFollows))
 	v1Router.Delete("/feed_follows/{feedFollowId}",apiConfig.middlewareAuth(apiConfig.handlerDeleteFeedFollow))
+	v1Router.Get("/posts",apiConfig.middlewareAuth(apiConfig.handlerGetPostsForUser))
 	router.Mount("/v1",v1Router)
 	srv := &http.Server{
 		Handler: router,
