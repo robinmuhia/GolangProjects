@@ -10,4 +10,5 @@ Project 7 - Gorm MySQL
 Project 8 - Severless DynamoDB
 Project 9 - Slack Age Bot
 Project 10 - Slack File Upload
-Project 11 - Rss Aggregator
+Project 11 - Slack WitAI
+Project 12 - Rss Aggregator
